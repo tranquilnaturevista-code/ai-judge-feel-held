@@ -24,12 +24,16 @@ def main() -> None:
     text = ENTRY_TEXT
     if not 1 <= len(text) <= 280:
         raise SystemExit(f"entry text is {len(text)} characters, must be 1-280")
+    if text != text.strip():
+        raise SystemExit("entry text must not start or end with whitespace")
     if not text.strip():
         raise SystemExit("entry text must not be only whitespace")
     out_dir = Path(os.environ.get("MAKEFUN_OUTPUT_DIR", "/output"))
     out_dir.mkdir(parents=True, exist_ok=True)
     out_path = out_dir / "entry.txt"
-    out_path.write_text(text, encoding="utf-8")
+    # Exact bytes, no trailing newline added: the judged text is
+    # precisely ENTRY_TEXT, nothing more.
+    out_path.write_bytes(text.encode("utf-8"))
     print(f"wrote {len(text)} characters to {out_path}")
 
 
